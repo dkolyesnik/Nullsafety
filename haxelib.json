@@ -1,0 +1,12 @@
+{
+	"name" : "nullsafety",
+	"url" : "",
+	"license" : "MIT",
+    "description" : "Macroses to convert long chains of calls like the.long.path into series of ifs and temp variables",
+	"tags": [],
+    "version" : "0.9.0",
+	"releasenote" : "",
+	"contributors" : ["dkolyesnik"],
+	"dependencies": {
+	  }
+}

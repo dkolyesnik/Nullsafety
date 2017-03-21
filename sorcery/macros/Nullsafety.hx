@@ -150,10 +150,8 @@ class Nullsafety
 					return macro $i {_resName} = $exprCall;
 				case CTSafeGet(_, _):
 					return macro { $i{_resName} = $exprCall; $i{_flagName} = true;};
-				case CTSafeGetNull(_ => null):
+				case CTSafeGetNull(_):
 					return macro $i {_resName} = $exprCall;
-				case CTSafeGetNull(dv):
-					return macro { $i{_resName} = $exprCall; if ($i{_resName} == null) $i{_resName} = $dv;};
 		}
 	};
 
@@ -274,11 +272,20 @@ class Nullsafety
 						$i{_resName} = $dv;
 					$i{_resName};
 				};
-			case CTSafeGetNull(_):
+			case CTSafeGetNull(_=>null):
 				return macro
 				{
 					var $_resName = null;
 					${createNextTempVarAndIf(firstCheckedExpr)};
+					$i{_resName};
+				};
+			case CTSafeGetNull(dv):
+				return macro
+				{
+					var $_resName = null;
+					${createNextTempVarAndIf(firstCheckedExpr)};
+					if ($i{_resName} == null) 
+						$i{_resName} = $dv;
 					$i{_resName};
 				};
 		}

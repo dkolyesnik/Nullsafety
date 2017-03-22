@@ -45,6 +45,7 @@ class Nullsafety
 	 * i.e. safeCall((a.b.c).d) will generate one check if(a.b.c != null)
 	 * @param	value  -  call chain
 	 */
+	@:noUsing
 	macro public static function safeCall(value:Expr)
 	{
 		log("--------------safeCall------------------");
@@ -64,6 +65,7 @@ class Nullsafety
 	 * @param	value  -  chain to get a value
 	 * @param	defaultValue  - default expression
 	 */
+	@:noUsing
 	macro public static function safeGet(value:Expr, ?defaultValue:Expr)
 	{
 		log("--------------safeGet------------------");
@@ -104,9 +106,6 @@ class Nullsafety
 	public static function _doit(value:Expr, callType:CallType )
 	{
 		log(callType.getName());
-
-		if (ExprTools.toString(value) == "@:this this")
-			throw "Do not use this as static extension, une import instead";
 
 		var exprArray = [];
 		switch (value.expr)

@@ -30,7 +30,7 @@ class Nullsafety
 	 * 		public var f:Void->Void;
 	 * }
 	 * there will be an runtime error if f is a null
-	 * Parentses can be uset to bypass this if it is a start of the expr:
+	 * Parenthesis can be uset to bypass this if it is a start of the expr:
 	 * safeGet((SomeClass.f)()) - this way it will check if SomeClass.f != null
 	 *
 	 * */
@@ -68,14 +68,14 @@ class Nullsafety
 		}
 		return value;
 	}
-
+	
 	/**
 	 * nullsafe chained calls
 	 * return true if last expression is executed, false otherwise
 	 * return value of the last expression is not checked, it can be any type
 	 * generate a number of (if != null) checks and local variables
 	 * no anonymous objects, functions and so on, strictly typed
-	 * wrapping part of the chain in parentheses will make it the fist check condition
+	 * wrapping part of the chain in Parenthesis will make it the fist check condition
 	 * i.e. safeCall((a.b.c).d) will generate one check if(a.b.c != null)
 	 * @param	value  -  call chain
 	 */
@@ -214,7 +214,7 @@ class Nullsafety
 					else
 						return createFinalIfBody(macro $i {prevVar} .$f);
 				case ECall(e, p):
-					//possible only after parentses or other call or array
+					//possible only after Parenthesis or other call or array
 					var callExpr = {expr:ECall(macro $i{prevVar}, p), pos:e.pos};
 					if (exprArray.length > 0)
 						return createNextTempVarAndIf(callExpr);

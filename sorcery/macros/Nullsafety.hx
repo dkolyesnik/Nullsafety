@@ -133,7 +133,7 @@ class Nullsafety
 		return _doit(value, isNullable ? CTSafeGetNull(defaultValue) : CTSafeGet(defaultTypeValue, defaultValue));
 	}
 	#if macro
-	static var _varPref = "__n_";
+	static var _varPref = "__";
 	static var _flagName = _varPref + "f";
 	static var _resName = _varPref + "r";
 

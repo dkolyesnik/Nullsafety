@@ -20,14 +20,14 @@ if(safeCall(some.long.chain)) {
 ``` 
 Will be transformed into
 ```haxe
-  var __f = false;
-  if(some != null) {
-    var __0 = some.long;
-    if(__0 != null){
-       __0.chain;
-       __f = true;
-     }
-  }
+var __f = false;
+if(some != null) {
+  var __0 = some.long;
+  if(__0 != null){
+     __0.chain;
+     __f = true;
+   }
+}
 if(_f){
   
 }

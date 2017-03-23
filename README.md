@@ -7,12 +7,13 @@ First expression of the array access is checked too, functions are called withou
 some().long[0].chain  - will check some() != null, long != null, long[0] !=null
 
 Parenthesis
-(some.long).chain - will check expression in Parenthesis and the rest of the call: some.long != null, chain != null
+(some.long).chain - will check expression in parenthesis and the rest of the call: some.long != null, chain != null
 
 
 safeCall
 -----------------
 Returns true if all calls were made. 
+
 Example:
 ```haxe
 if(safeCall(some.long.chain)) {
@@ -35,10 +36,11 @@ if(__f){
 safeGet
 -----------------
 Returns the result of the chained calls or default value.
-For nullable type
-Will check the result of the last call as well and return default value if it is null
-For Int, Float, Bool
-Will not check the result of the last call. In case if default value is omitted, returns 0 , 0.0, false
+
+For nullable type:  Will check the result of the last call as well and return default value if it is null. If call was successful, default expression will not be executed.
+
+For Int, Float, Bool:  Will not check the result of the last call. In case if default value is omitted, returns 0 , 0.0, false.
+
 Expample:
 ```haxe
 var x = safeGet(some.long.chain.x, 10);

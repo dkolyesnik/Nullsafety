@@ -50,27 +50,23 @@ class Nullsafety
 		var binop;
 		switch (value.expr)
 		{
-			case EBinop(b, e1, e2):
-				binop = b;
-				leftExpr = e1;
-				value = e2;
+			case EBinop(binop, leftExpr, rightExpr):
+				var defaultTypeValue = getDefaultTypeValue(rightExpr);
+				var resultExpr = _doit(rightExpr, CTSafeGet(defaultTypeValue, defaultTypeValue));
+				switch (resultExpr.expr)
+				{
+					case EBlock(a):
+						var binopExpr = {expr:EBinop(binop, leftExpr, macro $i{_resName}), pos:value.pos};
+						a.push(macro if ($i {_flagName}) $binopExpr);
+						a.push(macro $i {_flagName});
+					default:
+						resultExpr = macro {$resultExpr ; true;};
+				}
+				return resultExpr;
 			default:
 				throw "Error: wrong expr";
 		}
-
-		var defaultTypeValue = getDefaultTypeValue(value);
-		
-		var resultExpr = _doit(value, CTSafeGet(defaultTypeValue, defaultTypeValue));
-		switch (resultExpr.expr)
-		{
-			case EBlock(a):
-				var binopExpr = {expr:EBinop(binop, leftExpr, macro $i{_resName}), pos:value.pos};
-				a.push(macro if ($i {_flagName}) $binopExpr);
-				a.push(macro $i {_flagName});
-			default:
-				resultExpr = macro {$resultExpr ; true;};
-		}
-		return resultExpr;
+		return value;
 	}
 
 	/**
@@ -353,7 +349,7 @@ class Nullsafety
 				false;
 		}
 	}
-	
+
 	static function getDefaultTypeValue(value:Expr)
 	{
 		return switch (Context.typeExpr(value).t)

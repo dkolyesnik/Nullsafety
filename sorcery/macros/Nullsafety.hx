@@ -23,7 +23,7 @@ class Nullsafety
 	}
 	#end
 
-	/*
+	/* some issues
 	 * Will not check if the fiels that is called as function is not null
 	 * so in case of function type field like 
 	 * class SomeClass {
@@ -34,6 +34,58 @@ class Nullsafety
 	 * safeGet((SomeClass.f)()) - this way it will check if SomeClass.f != null
 	 * 
 	 * */
+	
+	 /**
+	  * nullsafe binop execution, will generate checks for the right expr
+	  * and binop will be executed only if all checks are passed
+	  * retruns true if binop is executed, false otherwise
+	  */
+	 macro public static function safeBOp(value:Expr)
+	 {
+		log("--------------safeBOp------------------");
+		log(Std.string(value.pos));
+		log(value);
+		
+		var leftExpr;
+		var binop;
+		switch(value.expr)
+		{
+			case EBinop(b, e1, e2):
+				binop = b;
+				leftExpr = e1;
+				value = e2;
+			default:
+				throw "Error: wrong expr";
+		}
+		
+		var returnType = Context.typeExpr(value).t;
+		var defaultTypeValue = switch (returnType)
+		{
+			case TAbstract(_.get()=> {name:"Int"}, _):
+				macro 0;
+			case TAbstract(_.get() => {name:"Float"}, _):
+				macro 0.0;
+			case TAbstract(_.get() => {name:"Bool"}, _):
+				macro false;
+			case TAbstract(_.get() => {name:"Void"}, _):
+				throw "Error: expression must be not Void";
+			default:
+				macro null;
+		}
+		
+		var resultExpr = _doit(value, CTSafeGet(defaultTypeValue, defaultTypeValue));
+		switch(resultExpr.expr)
+		{
+			case EBlock(a):
+				var binopExpr = {expr:EBinop(binop, leftExpr, macro $i{_resName}), pos:value.pos};
+				a.push(macro if ($i{_flagName}) $binopExpr);
+				a.push(macro $i{_flagName});
+			default:
+				resultExpr = macro {$resultExpr ; true;};
+		}
+		return resultExpr;
+	 }
+	 
 	
 	/**
 	 * nullsafe chained calls
@@ -72,7 +124,7 @@ class Nullsafety
 		log(Std.string(value.pos));
 		log(value);
 		log(defaultValue);
-
+		
 		var returnType = Context.typeExpr(value).t;
 		var isNullable = false;
 		var defaultTypeValue = switch (returnType)
@@ -95,8 +147,8 @@ class Nullsafety
 				defaultValue = null;
 			default:
 		}
-
-		return _doit(value, isNullable ? CTSafeGetNull(defaultValue) : CTSafeGet(defaultTypeValue, defaultValue));
+		
+			return _doit(value, isNullable ? CTSafeGetNull(defaultValue) : CTSafeGet(defaultTypeValue, defaultValue));
 	}
 	#if macro
 	static var _varPref = "__n_";
@@ -151,6 +203,9 @@ class Nullsafety
 					return macro { $i{_resName} = $exprCall; $i{_flagName} = true;};
 				case CTSafeGetNull(_):
 					return macro $i {_resName} = $exprCall;
+				//case CTSafeAssign(_, _, _):
+					//return macro { $i{_resName} = $exprCall; $i{_flagName} = true };
+				
 		}
 	};
 
@@ -287,6 +342,14 @@ class Nullsafety
 						$i{_resName} = $dv;
 					$i{_resName};
 				};
+			//case CTSafeAssign(l, dtv, dv):
+				//return macro
+				//{
+					//var $_resName = null;
+					//var $_flagName = false;
+					//${createNextTempVarAndIf(firstCheckedExpr)};
+					//if(!
+				//}
 		}
 
 	}
@@ -324,6 +387,7 @@ private enum CallType
 	CTSafeCall;
 	CTSafeGet(defTypeValue:Expr, defValue:Expr);
 	CTSafeGetNull(defValue:Expr);
+	//CTSafeAssign(leftExpr:Expr, defTypeValue:Expr, defValue:Expr);
 }
 #end
 

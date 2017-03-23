@@ -12,19 +12,22 @@ Parenthesis
 
 safeCall
 -----------------
-Returns true if all calls were made.
-safeCall(some.long.chain) will be transformed into
+Returns true if all calls were made. This way
 ```haxe
-{
-var __f = false;
-if(some != null) {
-var __0 = some.long;
-  if(__0 != null){
-    __0.chain;
-    __f = true;
-  }
+if(safeCall(some.long.chain)) {
 }
-_f;
+``` will be transformed into
+```haxe
+  var __f = false;
+  if(some != null) {
+    var __0 = some.long;
+    if(__0 != null){
+       __0.chain;
+       __f = true;
+     }
+  }
+if(_f){
+  
 }
 ```
 safeGet
@@ -34,10 +37,10 @@ For nullable type
 Will check the result of the last call as well and return default value if it is null
 For Int, Float, Bool
 Will not check the result of the last call. In case if default value is omitted, returns 0 , 0.0, false
-
-safeGet(some.long.chain.x, 10) will be transformed into
 ```haxe
-{
+var x = safeGet(some.long.chain.x, 10);
+```will be transformed into
+```haxe
 var __f = false;
 var __r = 0;
 if(some != null) {
@@ -52,6 +55,5 @@ var __0 = some.long;
 }
 if(!__f)
   __r = 10;
-__r;
-}
+var x = __r;
 ```

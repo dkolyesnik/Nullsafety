@@ -7,6 +7,7 @@ import haxe.macro.Type.ModuleType;
 import haxe.macro.Type.TConstant;
 import haxe.macro.Type.TypedExpr;
 import haxe.macro.Type.TypedExprDef;
+import haxe.macro.TypeTools;
 import haxe.macro.TypedExprTools;
 using haxe.macro.ExprTools;
 /**
@@ -109,6 +110,7 @@ class Nullsafety
 
 		var returnType = Context.typeExpr(value).t;
 		var isNullable = false;
+		//TODO use following
 		var defaultTypeValue = switch (returnType)
 		{
 			case TAbstract(_.get()=> {name:"Int"}, _):
@@ -208,7 +210,6 @@ class Nullsafety
 									return createFinalIfBody(callExpr);
 							default:
 								return createNextTempVarAndIf(macro $i {prevVar} .$f);
-
 						}
 					}
 					else
